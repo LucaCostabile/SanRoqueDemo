@@ -7,7 +7,8 @@ async function productosOrdenadosPorVentas() {
   const top = await prisma.saleItem.groupBy({ by: ['productId'], _sum: { qty: true } })
   const sumById = new Map(top.map(t => [t.productId, t._sum.qty || 0]))
   const productos = await prisma.product.findMany()
-  return productos.sort((a, b) => (sumById.get(b.id) || 0) - (sumById.get(a.id) || 0) || a.name.localeCompare(b.name))
+  const ordenados = productos.sort((a, b) => (sumById.get(b.id) || 0) - (sumById.get(a.id) || 0) || a.name.localeCompare(b.name))
+  return ordenados.map(p => ({ id: p.id, name: p.name, barcode: p.barcode ?? null, price: Number(p.price), stock: p.stock }))
 }
 
 export default async function VentasPage() {

@@ -41,7 +41,25 @@ export default function IngresosClient({ proveedores, productos }: { proveedores
           <option value="">Proveedor</option>
           {proveedores.map(p => (<option key={p.id} value={p.id}>{p.name}</option>))}
         </select>
-        <div />
+        {/* Alta rápida de producto para el proveedor seleccionado */}
+        {supplierId ? (
+          <form className="grid grid-cols-4 gap-2" onSubmit={async (e) => {
+            e.preventDefault()
+            const form = e.currentTarget as HTMLFormElement
+            const fd = new FormData(form)
+            fd.append('supplierId', String(supplierId))
+            const res = await fetch('/api/productos', { method: 'POST', body: fd })
+            const data = await res.json().catch(()=>({}))
+            if (!res.ok) { alert(data.error || 'No se pudo crear producto'); return }
+            form.reset()
+            startTransition(() => router.refresh())
+          }}>
+            <input name="name" placeholder="Producto" className="border p-2 rounded" required />
+            <input name="barcode" placeholder="Código" className="border p-2 rounded" />
+            <input name="price" placeholder="Precio" type="number" step="0.01" className="border p-2 rounded" required />
+            <button className="px-3 py-2 bg-gray-800 text-white rounded">Agregar producto</button>
+          </form>
+        ) : (<div />)}
       </div>
 
       {supplierId && (

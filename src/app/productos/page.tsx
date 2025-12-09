@@ -37,7 +37,13 @@ export default async function ProductosPage() {
         </thead>
         <tbody>
           {productos.map(p => (
-            <EditableProductRow key={p.id} product={p as any} />
+            <EditableProductRow key={p.id} product={{
+              id: p.id,
+              name: p.name,
+              barcode: p.barcode ?? null,
+              price: Number(p.price),
+              stock: p.stock,
+            }} />
           ))}
         </tbody>
       </table>

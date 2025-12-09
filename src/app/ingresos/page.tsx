@@ -7,7 +7,8 @@ import IngresosClient from './ingresos-client'
 export default async function IngresosPage() {
   const proveedores = await prisma.supplier.findMany({ orderBy: { name: 'asc' } })
   // Para el cliente, ya filtrará productos por proveedor seleccionado
-  const productos = await prisma.product.findMany({ orderBy: { name: 'asc' } })
+  const productosRaw = await prisma.product.findMany({ orderBy: { name: 'asc' } })
+  const productos = productosRaw.map(p => ({ id: p.id, name: p.name, supplierId: p.supplierId ?? null, stock: p.stock }))
   return (
     <div className="grid gap-4">
       <h2 className="text-lg font-medium">Ingreso de mercadería</h2>
